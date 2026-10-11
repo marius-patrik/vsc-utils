@@ -1,8 +1,8 @@
 {
   "name": "vsc-utils",
   "displayName": "VSC Utils",
-  "description": "Integrated browser link routing, hosts adblock, and Explorer browser/file shortcuts.",
-  "version": "0.0.4",
+  "description": "Integrated browser link routing and Explorer browser/file shortcuts.",
+  "version": "0.0.5",
   "publisher": "marius-patrik",
   "license": "MIT",
   "repository": {
@@ -22,13 +22,11 @@
   "keywords": [
     "browser",
     "integrated-browser",
-    "terminal-links",
-    "adblock",
-    "hosts"
+    "terminal-links"
   ],
   "scripts": {
     "check": "node --check extension.js",
-    "package": "vsce package --allow-star-activation --out vsc-utils-0.0.4.vsix"
+    "package": "vsce package --allow-star-activation --out vsc-utils-0.0.5.vsix"
   },
   "devDependencies": {
     "@vscode/vsce": "^3.6.0"
@@ -37,14 +35,7 @@
     "onStartupFinished",
     "onCommand:browserUtils.openNewBrowser",
     "onCommand:browserUtils.openClipboardUrl",
-    "onCommand:browserUtils.newTextFile",
-    "onCommand:browserUtils.adblock.install",
-    "onCommand:browserUtils.adblock.remove",
-    "onCommand:browserUtils.adblock.status",
-    "onCommand:browserUtils.adblock.repairYouTube",
-    "onCommand:browserUtils.adblock.copyInstallCommand",
-    "onCommand:browserUtils.adblock.openBlocklist",
-    "onCommand:browserUtils.adblock.openLog"
+    "onCommand:browserUtils.newTextFile"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -63,41 +54,6 @@
         "command": "browserUtils.newTextFile",
         "title": "New Text File",
         "category": "VSC Utils"
-      },
-      {
-        "command": "browserUtils.adblock.install",
-        "title": "Install/Update Hosts Blocklist",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.remove",
-        "title": "Remove Hosts Blocklist",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.status",
-        "title": "Show Status",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.repairYouTube",
-        "title": "Repair YouTube Playback",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.copyInstallCommand",
-        "title": "Copy Admin Install Command",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.openBlocklist",
-        "title": "Open Blocklist",
-        "category": "VSC Utils Adblock"
-      },
-      {
-        "command": "browserUtils.adblock.openLog",
-        "title": "Open Log",
-        "category": "VSC Utils Adblock"
       }
     ],
     "menus": {
@@ -120,28 +76,11 @@
           "default": true,
           "description": "Open terminal links in VS Code's integrated browser."
         },
-        "vscUtils.adblock.extraDomains": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [],
-          "description": "Additional domains to block in the Windows hosts file."
-        },
         "browserUtils.handleTerminalLinks": {
           "type": "boolean",
           "default": true,
           "deprecationMessage": "Use vscUtils.handleTerminalLinks instead.",
           "description": "Open terminal links in VS Code's integrated browser."
-        },
-        "browserUtils.adblock.extraDomains": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [],
-          "deprecationMessage": "Use vscUtils.adblock.extraDomains instead.",
-          "description": "Additional domains to block in the Windows hosts file."
         }
       }
     }

@@ -1,12 +1,7 @@
-const cp = require("child_process");
-const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
 
 const urlPattern = /https?:\/\/[^\s<>"'`)\]}]+/g;
-const blocklistPath = path.join(__dirname, "blocklist.txt");
-const helperPath = path.join(__dirname, "scripts", "update-hosts.ps1");
-const logPath = path.join(__dirname, "adblock.log");
 
 class BrowserTerminalLink extends vscode.TerminalLink {
   constructor(startIndex, length, url) {
@@ -14,90 +9,6 @@ class BrowserTerminalLink extends vscode.TerminalLink {
     this.url = url;
     this.tooltip = "Open in Integrated Browser";
   }
-}
-
-function quotePowerShell(value) {
-  return `'${String(value).replace(/'/g, "''")}'`;
-}
-
-function encodePowerShell(command) {
-  return Buffer.from(command, "utf16le").toString("base64");
-}
-
-function getExtraDomains() {
-  const config = vscode.workspace.getConfiguration("vscUtils");
-  const legacyConfig = vscode.workspace.getConfiguration("browserUtils");
-  const extraDomains = config.get(
-    "adblock.extraDomains",
-    legacyConfig.get("adblock.extraDomains", [])
-  );
-  return Array.isArray(extraDomains) ? extraDomains.join(",") : "";
-}
-
-function getHelperArguments(action, noPause) {
-  return [
-    "-NoExit",
-    "-NoProfile",
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    quotePowerShell(helperPath),
-    "-Action",
-    quotePowerShell(action),
-    "-BlocklistPath",
-    quotePowerShell(blocklistPath),
-    "-ExtraDomains",
-    quotePowerShell(getExtraDomains()),
-    "-LogPath",
-    quotePowerShell(logPath),
-    ...(noPause ? ["-NoPause"] : []),
-  ].join(" ");
-}
-
-function runElevated(action) {
-  const command = [
-    "$ErrorActionPreference = 'Stop'",
-    "Start-Process -FilePath 'powershell.exe' -Verb RunAs -ArgumentList " +
-      quotePowerShell(getHelperArguments(action, false)),
-  ].join("; ");
-
-  cp.spawn(
-    "powershell.exe",
-    ["-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encodePowerShell(command)],
-    { detached: true, stdio: "ignore", windowsHide: true }
-  ).unref();
-}
-
-function runStatus() {
-  return new Promise((resolve, reject) => {
-    cp.execFile(
-      "powershell.exe",
-      [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        helperPath,
-        "-Action",
-        "Status",
-        "-BlocklistPath",
-        blocklistPath,
-        "-ExtraDomains",
-        getExtraDomains(),
-        "-LogPath",
-        logPath,
-        "-NoPause",
-      ],
-      { windowsHide: true, maxBuffer: 1024 * 1024 },
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(new Error(stderr || stdout || error.message));
-          return;
-        }
-        resolve(stdout.trim());
-      }
-    );
-  });
 }
 
 function provideTerminalLinks(context) {
@@ -195,15 +106,6 @@ async function newTextFile(resource) {
   }
 }
 
-async function openFileIfExists(filePath, missingMessage) {
-  if (!fs.existsSync(filePath)) {
-    vscode.window.showErrorMessage(missingMessage);
-    return;
-  }
-  const doc = await vscode.workspace.openTextDocument(filePath);
-  await vscode.window.showTextDocument(doc);
-}
-
 function activate(context) {
   context.subscriptions.push(
     vscode.window.registerTerminalLinkProvider({
@@ -212,46 +114,7 @@ function activate(context) {
     }),
     vscode.commands.registerCommand("browserUtils.openNewBrowser", () => openIntegratedBrowser()),
     vscode.commands.registerCommand("browserUtils.openClipboardUrl", openClipboardUrl),
-    vscode.commands.registerCommand("browserUtils.newTextFile", newTextFile),
-    vscode.commands.registerCommand("browserUtils.adblock.install", () => {
-      runElevated("Install");
-      vscode.window.showInformationMessage(
-        "VSC Utils adblock installer opened. Approve the admin prompt, then restart VS Code."
-      );
-    }),
-    vscode.commands.registerCommand("browserUtils.adblock.remove", () => {
-      runElevated("Remove");
-      vscode.window.showInformationMessage(
-        "VSC Utils adblock remover opened. Approve the admin prompt, then restart VS Code."
-      );
-    }),
-    vscode.commands.registerCommand("browserUtils.adblock.status", async () => {
-      try {
-        const output = await runStatus();
-        vscode.window.showInformationMessage(output || "VSC Utils adblock status check finished.");
-      } catch (error) {
-        vscode.window.showErrorMessage(`VSC Utils adblock status failed: ${error.message}`);
-      }
-    }),
-    vscode.commands.registerCommand("browserUtils.adblock.repairYouTube", () => {
-      runElevated("RepairYouTube");
-      vscode.window.showInformationMessage(
-        "VSC Utils YouTube repair opened. Approve the admin prompt, then restart VS Code."
-      );
-    }),
-    vscode.commands.registerCommand("browserUtils.adblock.copyInstallCommand", async () => {
-      const command = `powershell.exe ${getHelperArguments("Install", false)}`;
-      await vscode.env.clipboard.writeText(command);
-      vscode.window.showInformationMessage(
-        "Copied the VSC Utils adblock install command. Paste it into an Administrator PowerShell."
-      );
-    }),
-    vscode.commands.registerCommand("browserUtils.adblock.openBlocklist", () =>
-      openFileIfExists(blocklistPath, `Blocklist not found: ${blocklistPath}`)
-    ),
-    vscode.commands.registerCommand("browserUtils.adblock.openLog", () =>
-      openFileIfExists(logPath, `Log not found yet: ${logPath}`)
-    )
+    vscode.commands.registerCommand("browserUtils.newTextFile", newTextFile)
   );
 }
 

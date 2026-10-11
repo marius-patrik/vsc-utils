@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5
+
+- Remove hosts-file based adblock feature, commands, and settings.
+
 ## 0.0.4
 
 - Rename the extension and repository to VSC Utils.

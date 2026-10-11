@@ -1,5 +1,4 @@
 node_modules/
 *.vsix
-adblock.log
 npm-debug.log*
 .vscode-test/

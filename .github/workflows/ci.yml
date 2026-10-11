@@ -26,15 +26,5 @@ jobs:
       - name: Check extension JavaScript
         run: npm run check
 
-      - name: Check PowerShell helper
-        shell: pwsh
-        run: |
-          $errors = $null
-          [System.Management.Automation.PSParser]::Tokenize((Get-Content scripts/update-hosts.ps1 -Raw), [ref]$errors) | Out-Null
-          if ($errors) {
-            $errors | Format-List *
-            exit 1
-          }
-
       - name: Package VSIX
         run: npm run package
