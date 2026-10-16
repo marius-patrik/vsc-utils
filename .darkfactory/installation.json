@@ -4,12 +4,12 @@
   "slug": "marius-patrik/vsc-utils",
   "sourceBranch": "main",
   "release": {
-    "tag": "v0.291.7",
-    "sha": "f1dfb836ece92e40cd8ee62b39cb9d5b5124b64f",
-    "digest": "4077d68f62a8379b72f300762c78ee120ed152c96ff7295cb22214a6db21b875"
+    "tag": "v0.291.8",
+    "sha": "35e0d23b6bdc27a6290a206e1ce10d79630fe4cc",
+    "digest": "f1ee0ddfd452ce766ef85531dea8301948355d8abba9a694ad9027aed7c2dea0"
   },
   "fileHashes": {
-    "repo.dfconfig": "60bfe36ee8f3c907bc6eef33edd7c5f60bdf3c616ee48ebb9959b5c6a289dcde",
-    ".github/workflows/darkfactory-control.yml": "8d9f6f3ee742c01b572b981a347636d5ebbd4db7831cd95fa06ac516eeaf1176"
+    "repo.dfconfig": "c29dd5f8289ab9e8f86b161372b89e51c09394af9c3a6e36ad33dd51718fa88c",
+    ".github/workflows/darkfactory-control.yml": "a980ac4046308d86e235bea1c93911ff6b418f9460cdd018aa74393a4ea44a99"
   }
 }
